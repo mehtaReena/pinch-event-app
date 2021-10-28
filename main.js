@@ -57,16 +57,19 @@ function showGal() {
 }
 function move(ev) {
     if (ev.targetTouches.length == 2 && ev.changedTouches.length == 2) {
-          // Check if the two target touches are the same ones that started
-        let dist2 = Math.hypot(//get rough estimate of new distance between fingers
+
+        let dist2 = Math.hypot(
          ev.touches[0].pageX - ev.touches[1].pageX,
          ev.touches[0].pageY - ev.touches[1].pageY);
          //alert(dist);
-         if(dist1>dist2) {//if fingers are closer now than when they first touched screen, they are pinching
-           alert('zoom out');
+         if(dist1>dist2) {
+           alert('zoom out' , dist2);
+           Spotlight.zoom(dist2);
+
          }
-         if(dist1<dist2) {//if fingers are further apart than when they first touched the screen, they are making the zoomin gesture
-            alert('zoom in');
+         if(dist1<dist2) {
+            alert('zoom in' ,dist2);
+            Spotlight.zoom(dist2);
          }
     }
 
