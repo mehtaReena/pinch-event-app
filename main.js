@@ -4,6 +4,8 @@
 //   console.log(val)
 // }
 
+var dist1=0;
+
 function showGal() {
     var gallery = [
       {
@@ -43,27 +45,32 @@ function showGal() {
     });
   }
 
-  let initial_touches;
-  function touchMove(e) {
-      if (e.touches.length === 2) {
-          let mp_init = midpoint(initial_touches);
-          let mp_curr = midpoint(e.touches);
-          gesture = {
-              scale: e.scale !== undefined ? e.scale : distance(e.touches) / distance(initial_touches),
-              rotation: e.rotation !== undefined ? e.rotation : angle(e.touches) - angle(initial_touches),
-              translation: {
-                  x: mp_curr.x - mp_init.x,
-                  y: mp_curr.y - mp_init.y
-              },
-              origin: mp_init
-          };
-          doGesture(gesture);
-          e.preventDefault();
-      }
-  }
 
 
+  function start(ev) {
+    if (ev.targetTouches.length == 2) {//check if two fingers touched screen
+        dist1 = Math.hypot( //get rough estimate of distance between two fingers
+         ev.touches[0].pageX - ev.touches[1].pageX,
+         ev.touches[0].pageY - ev.touches[1].pageY);
+    }
 
+}
+function move(ev) {
+    if (ev.targetTouches.length == 2 && ev.changedTouches.length == 2) {
+          // Check if the two target touches are the same ones that started
+        let dist2 = Math.hypot(//get rough estimate of new distance between fingers
+         ev.touches[0].pageX - ev.touches[1].pageX,
+         ev.touches[0].pageY - ev.touches[1].pageY);
+         //alert(dist);
+         if(dist1>dist2) {//if fingers are closer now than when they first touched screen, they are pinching
+           alert('zoom out');
+         }
+         if(dist1<dist2) {//if fingers are further apart than when they first touched the screen, they are making the zoomin gesture
+            alert('zoom in');
+         }
+    }
+
+}
 
   window.addEventListener("load", function () {
     // console.log("sdfsdfsdS", Spotlight);
@@ -73,68 +80,31 @@ function showGal() {
     Array.from(els).forEach((el) => {
       console.log(el);
 
-      el.addEventListener('touchstart', function watchTouches(e) {
-		if (e.touches.length === 2) {
-			initial_touches = e.touches;
-			gesture = {
-				scale: 1,
-				rotation: 0,
-				translation: { x: 0, y: 0 },
-				origin: midpoint(initial_touches)
-			};
-			/*
-				All the other events using `watchTouches` are passive,
-				we don't need to call preventDefault().
-			 */
-			if (e.type === 'touchstart') {
-				e.preventDefault();
-			}
-			startGesture(gesture);
-			el.addEventListener('touchmove', touchMove, { passive: false });
-			el.addEventListener('touchend', watchTouches);
-			el.addEventListener('touchcancel', watchTouches);
-		} else if (gesture) {
-			endGesture(gesture);
-			gesture = null;
-			el.removeEventListener('touchmove', touchMove);
-			el.removeEventListener('touchend', watchTouches);
-			el.removeEventListener('touchcancel', watchTouches);
-		}
-	}, { passive: false });
+      el.addEventListener ('touchstart', start, false);
 
-	if (
-		typeof GestureEvent !== 'undefined' &&
-		typeof TouchEvent === 'undefined'
-	) {
-		el.addEventListener('gesturestart', function handleGestureStart(e) {
-			startGesture({
-				translation: { x: 0, y: 0 },
-				scale: e.scale,
-				rotation: e.rotation,
-				origin: { x: e.clientX, y: e.clientY }
-			});
-			e.preventDefault();
-		}, { passive: false });
-		el.addEventListener('gesturechange', function handleGestureChange(e) {
-			doGesture({
-				translation: { x: 0, y: 0 },
-				scale: e.scale,
-				rotation: e.rotation,
-				origin: { x: e.clientX, y: e.clientY }
-			});
-			e.preventDefault();
-		}, { passive: false });
-		el.addEventListener('gestureend', function handleGestureEnd(e) {
-			endGesture({
-				translation: { x: 0, y: 0 },
-				scale: e.scale,
-				rotation: e.rotation,
-				origin: { x: e.clientX, y: e.clientY }
-			});
-		});
-	}
-
-
-
+      el.addEventListener('touchmove', move, false  );
+      el.addEventListener(
+        "touchcancel",
+        (ev) => {
+          // Invoke the appropriate handler depending on the
+          // number of touch points.
+          ev.preventDefault();
+        },
+        false
+      );
+      el.addEventListener(
+        "touchend",
+        (ev) => {
+          // Invoke the appropriate handler depending on the
+          // number of touch points.
+          ev.preventDefault();
+          Spotlight.zoom(1);
+          // let touchCount = document.getElementById("touchCount");
+          // let positions = document.getElementById("positions");
+          // touchCount.innerText = ev.touches.length;
+          // positions.innerText = "Touch has Ended";
+        },
+        false
+      );
     });
   });
