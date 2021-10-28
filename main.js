@@ -90,15 +90,15 @@ function showGal() {
 				e.preventDefault();
 			}
 			startGesture(gesture);
-			container.addEventListener('touchmove', touchMove, { passive: false });
-			container.addEventListener('touchend', watchTouches);
-			container.addEventListener('touchcancel', watchTouches);
+			el.addEventListener('touchmove', touchMove, { passive: false });
+			el.addEventListener('touchend', watchTouches);
+			el.addEventListener('touchcancel', watchTouches);
 		} else if (gesture) {
 			endGesture(gesture);
 			gesture = null;
-			container.removeEventListener('touchmove', touchMove);
-			container.removeEventListener('touchend', watchTouches);
-			container.removeEventListener('touchcancel', watchTouches);
+			el.removeEventListener('touchmove', touchMove);
+			el.removeEventListener('touchend', watchTouches);
+			el.removeEventListener('touchcancel', watchTouches);
 		}
 	}, { passive: false });
 
@@ -106,7 +106,7 @@ function showGal() {
 		typeof GestureEvent !== 'undefined' &&
 		typeof TouchEvent === 'undefined'
 	) {
-		container.addEventListener('gesturestart', function handleGestureStart(e) {
+		el.addEventListener('gesturestart', function handleGestureStart(e) {
 			startGesture({
 				translation: { x: 0, y: 0 },
 				scale: e.scale,
@@ -115,7 +115,7 @@ function showGal() {
 			});
 			e.preventDefault();
 		}, { passive: false });
-		container.addEventListener('gesturechange', function handleGestureChange(e) {
+		el.addEventListener('gesturechange', function handleGestureChange(e) {
 			doGesture({
 				translation: { x: 0, y: 0 },
 				scale: e.scale,
@@ -124,7 +124,7 @@ function showGal() {
 			});
 			e.preventDefault();
 		}, { passive: false });
-		container.addEventListener('gestureend', function handleGestureEnd(e) {
+		el.addEventListener('gestureend', function handleGestureEnd(e) {
 			endGesture({
 				translation: { x: 0, y: 0 },
 				scale: e.scale,
