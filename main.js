@@ -63,13 +63,15 @@ function move(ev) {
          ev.touches[0].pageY - ev.touches[1].pageY);
          //alert(dist);
          if(dist1>dist2) {
-           alert('zoom out' , dist2);
-           Spotlight.zoom(dist2);
+           alert('zoom out' ,dist1 , dist2);
+           console.log("zoom out "  ,dist1 , dist2);
+           Spotlight.zoom(2);
 
          }
          if(dist1<dist2) {
-            alert('zoom in' ,dist2);
-            Spotlight.zoom(dist2);
+            console.log("  'zoom in "  ,dist1 , dist2);
+            alert('zoom in' ,dist1 ,dist2);
+            Spotlight.zoom(0);
          }
     }
 
